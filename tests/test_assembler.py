@@ -1,6 +1,6 @@
 import pytest
 
-from tiny8.assembler import assemble, AssemblerError
+from tiny8.assembler import assemble, assemble_with_lines, AssemblerError
 from tiny8.cpu import CPU, NOP, LDA, SUBI, JMP, JNZ, OUT, HLT
 
 
@@ -116,3 +116,10 @@ def test_assembled_program_runs_on_the_cpu():
     cpu.load_program(assemble(source))
     cpu.run()
     assert cpu.output == [3, 2, 1]
+
+
+def test_assemble_with_lines_maps_instructions_to_source_lines():
+    source = "; comment\nLDA 1\n\nloop: OUT\nJMP loop"
+    program, lines = assemble_with_lines(source)
+    assert program == [LDA, 1, OUT, 0, JMP, 2]
+    assert lines == [2, 4, 5]

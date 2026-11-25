@@ -24,9 +24,19 @@ LABEL_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 class AssemblerError(Exception):
     """Raised when the assembly text has a mistake. The message names the line."""
 
-
 def assemble(source):
     """Turn assembly text into a list of bytes the CPU can load."""
+    return assemble_with_lines(source)[0]
+
+
+def assemble_with_lines(source):
+    """Like assemble, but also returns the source line number of each instruction.
+
+    Returns (program, lines). lines[n] is the line of the n-th instruction,
+    which starts at address n * 2. A window uses this to highlight the line
+    that is about to run.
+    """
+
     labels = {}
     instructions = []  # each item: (line number, mnemonic, operand text or None)
 
@@ -71,7 +81,7 @@ def assemble(source):
     for line_number, mnemonic, operand_text in instructions:
         program.append(MNEMONICS[mnemonic])
         program.append(_resolve_operand(operand_text, labels, line_number))
-    return program
+    return program, [line_number for line_number, _, _ in instructions]
 
 
 def _resolve_operand(text, labels, line_number):
