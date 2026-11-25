@@ -53,6 +53,30 @@ class App:
         self.output_box.config(state="disabled")
         self.output_box.pack()
 
+        # Memory grid: 16 rows x 16 columns, one cell per address.
+        memory_frame = tk.Frame(root)
+        memory_frame.grid(row=0, column=2, sticky="n", padx=8, pady=8)
+        tk.Label(memory_frame, text="Memory (hex)").grid(row=0, column=0, columnspan=17, sticky="w")
+
+        # Column headings 0..F across the top.
+        for col in range(16):
+            tk.Label(memory_frame, text=f"{col:X}", font=("Consolas", 9), fg="gray").grid(
+                row=1, column=col + 1
+            )
+
+        self.memory_cells = []
+        for row in range(16):
+            # Row heading 0..F down the left side.
+            tk.Label(memory_frame, text=f"{row:X}", font=("Consolas", 9), fg="gray").grid(
+                row=row + 2, column=0
+            )
+            for col in range(16):
+                cell = tk.Label(
+                    memory_frame, text="00", font=("Consolas", 9), width=3, relief="flat"
+                )
+                cell.grid(row=row + 2, column=col + 1)
+                self.memory_cells.append(cell)
+        
         self.refresh()
 
     def on_load(self):
@@ -90,6 +114,14 @@ class App:
         self.output_box.delete("1.0", "end")
         self.output_box.insert("1.0", "\n".join(str(v) for v in state["output"]))
         self.output_box.config(state="disabled")
+
+        # Memory grid: show each byte in hex, and highlight where the PC points.
+        pc = state["pc"]
+        for address, cell in enumerate(self.memory_cells):
+            cell.config(text=f"{state['memory'][address]:02X}", bg="SystemButtonFace")
+        if self.controller.can_step():
+            self.memory_cells[pc].config(bg="gold")
+            self.memory_cells[(pc + 1) % 256].config(bg="khaki")
 
 
 def main():
