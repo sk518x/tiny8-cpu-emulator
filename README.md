@@ -15,6 +15,8 @@ I built Tiny8 to understand how a CPU works, including instruction fetching, reg
 
 ## Screenshot
 
+![The Tiny8 window running the multiply example](docs/screenshot.png)
+
 ## Quick Start
 
 **Requirements:**
