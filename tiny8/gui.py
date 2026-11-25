@@ -2,10 +2,13 @@
 
 import tkinter as tk
 
+from tiny8.controller import Controller
+
 
 class App:
     def __init__(self, root):
         self.root = root
+        self.controller = Controller()
         root.title("Tiny8 CPU Emulator")
 
         # Row 0: the program box, with a label above it.
@@ -18,8 +21,14 @@ class App:
         # Row 1: the four buttons side by side.
         button_frame = tk.Frame(root)
         button_frame.grid(row=1, column=0, sticky="w", padx=8)
-        for name in ("Load", "Step", "Run", "Reset"):
-            tk.Button(button_frame, text=name, width=8).pack(side="left", padx=2)
+        buttons = (
+            ("Load", self.on_load),
+            ("Step", self.on_step),
+            ("Run", self.on_run),
+            ("Reset", self.on_reset),
+        )
+        for name, callback in buttons:
+            tk.Button(button_frame, text=name, width=8, command=callback).pack(side="left", padx=2)
 
         # Row 2: the status bar.
         self.status = tk.Label(root, text="No program loaded", anchor="w")
@@ -29,6 +38,26 @@ class App:
         root.rowconfigure(0, weight=1)
         root.columnconfigure(0, weight=1)
 
+    def on_load(self):
+        source = self.program_box.get("1.0", "end")
+        self.controller.load(source)
+        self.refresh()
+
+    def on_step(self):
+        self.controller.step()
+        self.refresh()
+
+    def on_run(self):
+        self.controller.run()
+        self.refresh()
+
+    def on_reset(self):
+        self.controller.reset()
+        self.refresh()
+
+    def refresh(self):
+        """Redraw everything that depends on the controller's state."""
+        self.status.config(text=self.controller.status())
 
 def main():
     root = tk.Tk()
