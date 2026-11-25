@@ -17,6 +17,7 @@ class App:
         tk.Label(program_frame, text="Program").pack(anchor="w")
         self.program_box = tk.Text(program_frame, width=40, height=20, font=("Consolas", 11))
         self.program_box.pack(fill="both", expand=True)
+        self.program_box.tag_configure("current", background="gold")
 
         # Row 1: the four buttons side by side.
         button_frame = tk.Frame(root)
@@ -109,6 +110,14 @@ class App:
                 f"Carry = {int(state['carry'])}"
             )
         )
+        
+        # Program box: highlight the source line that is about to run.
+        self.program_box.tag_remove("current", "1.0", "end")
+        line = self.controller.current_line()
+        if line is not None:
+            self.program_box.tag_add("current", f"{line}.0", f"{line}.end")
+            self.program_box.see(f"{line}.0")
+
         # A disabled text box must be switched on briefly before we can change it.
         self.output_box.config(state="normal")
         self.output_box.delete("1.0", "end")
