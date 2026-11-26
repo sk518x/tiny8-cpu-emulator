@@ -13,9 +13,11 @@ I built Tiny8 to understand how a CPU works, including instruction fetching, reg
 - **Command-line interface:** Assembles and executes programs, with an optional step-by-step execution trace.
 - **Graphical interface:** A Tkinter window displaying the program, current instruction, registers, flags, a 16 × 16 memory grid and program output. Includes Load, Step, Run and Reset controls.
 
-## Screenshot
+## Screenshot and demo video
 
 ![The Tiny8 window running the multiply example](docs/screenshot.png)
+
+[Watch demo on YouTube](https://youtu.be/BUb1aSFWy-w)
 
 ## Quick Start
 
